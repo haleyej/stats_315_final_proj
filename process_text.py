@@ -17,8 +17,8 @@ def remove_emojis(s):
     valid = ''
     for i in range(len(s)):
         c = s[i]
-    if emoji.is_emoji(c) == False:
-        valid += c
+        if emoji.is_emoji(c) == False:
+            valid += c
     return valid
 
 def clean_text(df):
