@@ -24,7 +24,7 @@ def pad_inputs(s, max_len):
     else:
         return s
 
-def get_embeddings(glove, corpus, vocab_size, embedding_size, pretrained_embeddings):
+def get_embeddings(glove, corpus, vocab_size, embedding_size):
     '''
     Takes in corpus and glove embedding layer
 
@@ -33,9 +33,33 @@ def get_embeddings(glove, corpus, vocab_size, embedding_size, pretrained_embeddi
     unique_words = sorted(list(set(corpus)))
     embedding_weights = np.zeros((vocab_size, embedding_size))
     for idx, word in enumerate(unique_words):
-        if word in pretrained_embeddings:
+        if word in glove:
             embedding_weights[idx + 1, :] = glove[word]
     return embedding_weights
+
+def get_glove_embedding_input(X_train_tokens, y_train, X_test, y_test, X_val, y_val, tokenizer, MAX_LEN, NUM_CLASSES):
+    '''
+    Takes in test, train and validation data
+    Prepares it for model using glove embedding
+    Makes call to pad_inputs
+    
+    note that X_train should already be tokenized (it's just the way I wrote this I know it's dumb)
+    (but we need to fit the tokenizer on X_train bc ~leakage~) 
+
+    Returns test, train and validation data
+    '''
+    y_train_input = tf.keras.utils.to_categorical(y_train-1, num_classes = NUM_CLASSES)
+    X_train_input = np.array(X_train_tokens)
+
+    X_val_input = tokenizer.texts_to_sequences(X_val)
+    X_val_input = np.array([pad_inputs(s, MAX_LEN) for s in X_val_input])
+    y_val_input = tf.keras.utils.to_categorical(y_val - 1, num_classes = NUM_CLASSES)
+
+    X_test_input = tokenizer.texts_to_sequences(X_test)
+    X_test_input = np.array([pad_inputs(s, MAX_LEN) for s in X_test_input])
+    y_test_input = tf.keras.utils.to_categorical(y_test-1, num_classes = NUM_CLASSES)
+    
+    return (X_train_input, y_train_input, X_test_input, y_test_input, X_val_input, y_val_input)
 
 
 def get_bert_encodings(s, tokenizer, MAX_LEN):
