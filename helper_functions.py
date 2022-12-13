@@ -1,9 +1,7 @@
-# Contains helper functions and code for my final project 
-# for STATS 315, Statistics and Artifical Intelligence,
-# at the University of Michigan
-# intended to help clean up the notebook where I'm training 
-# my models
-# By Haley Johnson
+# STATS 315, Statistics and Artifical Intelligence, at the University of Michigan
+# Contains helper functions for my final project 
+# intended to help clean up the notebook where I'm training my models
+# Haley Johnson
 
 import pandas as pd
 import numpy as np 
@@ -122,6 +120,11 @@ def get_bert_inputs(X, tokenizer, MAX_LEN):
 def sparse2tensor(X):
         '''
         Converts sparse matrix numpy to Tensorflow tensor 
+
+        Credit to this stack overflow post: 
+        https://stackoverflow.com/questions/42560245/use-coo-matrix-in-tensorflow
+
+        ^code is not copied directly from post, just heavily inspired by it :) 
         '''
         X = X.tocoo()
         idx = np.mat([X.row, X.col]).T
